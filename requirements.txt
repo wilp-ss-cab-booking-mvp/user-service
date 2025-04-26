@@ -1,0 +1,6 @@
+# Lists all the packages needed to install for this service.
+flask
+flask_sqlalchemy
+flask_jwt_extended
+psycopg2-binary
+python-dotenv
