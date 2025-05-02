@@ -5,6 +5,7 @@ from flask_jwt_extended import create_access_token
 from config import JWT_SECRET
 import requests
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from config import BOOKING_SERVICE_URL
 
 
 bp = Blueprint('user_bp', __name__)
@@ -60,7 +61,7 @@ Show only users who are NOT booked.'''
 def free_users():
     all_users = User.query.all()
     try:
-        response = requests.get("http://booking:5000/active-bookings", timeout=5)
+        response = requests.get(f"{BOOKING_SERVICE_URL}/active-bookings", timeout=5)
         response.raise_for_status()
         bookings = response.json()
     except requests.exceptions.RequestException as e:
@@ -77,3 +78,11 @@ def free_users():
             })
 
     return jsonify(free_users)
+
+# GET /users/<id>
+@bp.route("/users/<int:user_id>", methods=["GET"])
+def get_user_by_id(user_id):
+    user = User.query.get(user_id)
+    if user:
+        return jsonify(user.to_dict())
+    return jsonify({"error": "User not found"}), 404
